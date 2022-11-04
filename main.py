@@ -71,21 +71,20 @@ def save():
     new image, but this will probably happen rarely and it's not worth the time
     for me to implement a fix for this.
     """
-    directory = os.getcwd()
     mi = int(entry_iterations.get())
     er = float(entry_escape.get())
     c = complex(entry_centre.get().replace(" ", ""))
     w = float(entry_width.get())
     image = generate_set()
-    os.makedirs("mandelbrot-images", exist_ok=True)
-    image.save(
-        f"{directory}/mandelbrot-images/mandelbrot_{mi}_{er}_{c}_{w}.png"
-    )
 
+    directory = os.getcwd()
+    os.makedirs("mandelbrot-images", exist_ok=True)
+    save_directory = f"{directory}/mandelbrot-images/mandelbrot_{mi}_{er}_{c}_{w}.png"
+    image.save(save_directory)
+    print(f"Image saved to {save_directory}")
 
 colormap = matplotlib.cm.get_cmap("twilight").colors
 palette = denormalize(colormap)
-
 
 ##########################
 # Tkinter configuration. #
