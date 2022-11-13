@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+List of matplotlib colormaps here:
+https://matplotlib.org/stable/tutorials/colors/colormaps.html
+"""
 import os
 import matplotlib.cm
 import tkinter as tk
