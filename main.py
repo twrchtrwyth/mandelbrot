@@ -83,7 +83,7 @@ def save():
     image.save(save_directory)
     print(f"Image saved to {save_directory}")
 
-colormap = matplotlib.cm.get_cmap("twilight").colors
+colormap = matplotlib.cm.get_cmap("viridis").colors
 palette = denormalize(colormap)
 
 ##########################
