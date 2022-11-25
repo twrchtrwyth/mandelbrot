@@ -9,6 +9,7 @@ class Mandelbrot:
     def __init__(self) etc. syntax, banding is still present. Presumably it is
     something to do with defining the escape_radiues as a float here?
     """
+    # This syntax only works in dataclasses.
     max_iterations: int
     escape_radius: float = 2.0
 

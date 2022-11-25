@@ -4,6 +4,7 @@ from PIL import Image
 
 @dataclass
 class Viewport:
+    # This syntax only works in dataclasses.
     image: Image.Image
     center: complex
     width: float
