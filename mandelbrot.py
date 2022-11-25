@@ -4,12 +4,11 @@ from math import log
 
 @dataclass
 class Mandelbrot:
-    """I don't really understand how this dataclass decorator works, but it is
+    """I don't really understand how thiedataclass decorator works, but it is
     required in order for smoothing to work correctly. If using the normal
     def __init__(self) etc. syntax, banding is still present. Presumably it is
     something to do with defining the escape_radiues as a float here?
     """
-    # This syntax only works in dataclasses.
     max_iterations: int
     escape_radius: float = 2.0
 

@@ -1,0 +1,110 @@
+diff --git a/main.py b/main.py
+index 8f63f9a..ce1bfd2 100755
+--- a/main.py
++++ b/main.py
+@@ -12,18 +12,21 @@ from viewport import Viewport
+ 
+ SIZE = 256
+ 
++
+ def paint(mandelbrot_set, viewport, palette, smooth):
+     for pixel in viewport:
+         stability = mandelbrot_set.stability(complex(pixel), smooth)
+         index = int(min(stability * len(palette), len(palette) - 1))
+         pixel.color = palette[index % len(palette)]
+ 
++
+ def denormalize(palette):
+     return [
+         tuple(int(channel * 255) for channel in color)
+         for color in palette
+     ]
+ 
++
+ def generate_set():
+     """Update the area of the set that is shown in the window."""
+     max_iterations = int(entry_iterations.get())
+@@ -42,6 +45,7 @@ def generate_set():
+     canvas.itemconfig(canvas_image, image=tk_image)
+     return image
+ 
++
+ def clear_input():
+     """Clear all text from the entry boxes."""
+     entry_iterations.delete(0, tk.END)
+@@ -49,6 +53,7 @@ def clear_input():
+     entry_centre.delete(0, tk.END)
+     entry_width.delete(0, tk.END)
+ 
++
+ def show_spiral():
+     """Zoom to a beautiful spiral."""
+     misiurewicz_point = "-0.7435 + 0.1314j"
+@@ -59,6 +64,7 @@ def show_spiral():
+     entry_width.insert(0, "0.002")
+     generate_set()
+ 
++
+ def reset():
+     """Show the whole Mandelbrot set."""
+     clear_input()
+@@ -68,6 +74,7 @@ def reset():
+     entry_width.insert(0, 3)
+     generate_set()
+ 
++
+ def save():
+     """Save the image with a filename corresponding to the parameters of the
+     generated image.
+@@ -87,6 +94,25 @@ def save():
+     image.save(save_directory)
+     print(f"Image saved to {save_directory}")
+ 
++
++def get_mouse(event):
++    x, y = event.x, event.y
++    return x, y
++
++
++def convert_to_complex(event):
++    """Somehow need this to scale as we zoom in... Ye gods."""
++    x, y = get_mouse(event)
++    x -= (SIZE / 2)
++    y -= (SIZE / 2)
++    y *= 1j
++    print(x, y)
++
++
++def insert_coordinates(event):
++    pass 
++
++
+ colormap = matplotlib.cm.get_cmap("viridis").colors
+ palette = denormalize(colormap)
+ 
+@@ -105,6 +131,7 @@ frame_image.grid(row=0, rowspan=3, column=0)
+ # Load the image into Tkinter.
+ canvas = tk.Canvas(master=frame_image, width=SIZE, height=SIZE, bg="white")
+ canvas.pack()
++canvas.bind("<Button-1>", convert_to_complex)
+ 
+ # Create a frame for user input.
+ frame_input = tk.Frame(master=window)
+diff --git a/mandelbrot.py b/mandelbrot.py
+index 06213dd..5c0810c 100644
+--- a/mandelbrot.py
++++ b/mandelbrot.py
+@@ -4,12 +4,11 @@ from math import log
+ 
+ @dataclass
+ class Mandelbrot:
+-    """I don't really understand how this dataclass decorator works, but it is
++    """I don't really understand how thiedataclass decorator works, but it is
+     required in order for smoothing to work correctly. If using the normal
+     def __init__(self) etc. syntax, banding is still present. Presumably it is
+     something to do with defining the escape_radiues as a float here?
+     """
+-    # This syntax only works in dataclasses.
+     max_iterations: int
+     escape_radius: float = 2.0
+ 

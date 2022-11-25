@@ -12,17 +12,20 @@ from viewport import Viewport
 
 SIZE = 256
 
+
 def paint(mandelbrot_set, viewport, palette, smooth):
     for pixel in viewport:
         stability = mandelbrot_set.stability(complex(pixel), smooth)
         index = int(min(stability * len(palette), len(palette) - 1))
         pixel.color = palette[index % len(palette)]
 
+
 def denormalize(palette):
     return [
         tuple(int(channel * 255) for channel in color)
         for color in palette
     ]
+
 
 def generate_set():
     """Update the area of the set that is shown in the window."""
@@ -42,12 +45,14 @@ def generate_set():
     canvas.itemconfig(canvas_image, image=tk_image)
     return image
 
+
 def clear_input():
     """Clear all text from the entry boxes."""
     entry_iterations.delete(0, tk.END)
     entry_escape.delete(0, tk.END)
     entry_centre.delete(0, tk.END)
     entry_width.delete(0, tk.END)
+
 
 def show_spiral():
     """Zoom to a beautiful spiral."""
@@ -59,6 +64,7 @@ def show_spiral():
     entry_width.insert(0, "0.002")
     generate_set()
 
+
 def reset():
     """Show the whole Mandelbrot set."""
     clear_input()
@@ -67,6 +73,7 @@ def reset():
     entry_centre.insert(0, -0.75)
     entry_width.insert(0, 3)
     generate_set()
+
 
 def save():
     """Save the image with a filename corresponding to the parameters of the
@@ -87,6 +94,25 @@ def save():
     image.save(save_directory)
     print(f"Image saved to {save_directory}")
 
+
+def get_mouse(event):
+    x, y = event.x, event.y
+    return x, y
+
+
+def convert_to_complex(event):
+    """Somehow need this to scale as we zoom in... Ye gods."""
+    x, y = get_mouse(event)
+    x -= (SIZE / 2)
+    y -= (SIZE / 2)
+    y *= 1j
+    print(x, y)
+
+
+def insert_coordinates(event):
+    pass 
+
+
 colormap = matplotlib.cm.get_cmap("viridis").colors
 palette = denormalize(colormap)
 
@@ -105,6 +131,7 @@ frame_image.grid(row=0, rowspan=3, column=0)
 # Load the image into Tkinter.
 canvas = tk.Canvas(master=frame_image, width=SIZE, height=SIZE, bg="white")
 canvas.pack()
+canvas.bind("<Button-1>", convert_to_complex)
 
 # Create a frame for user input.
 frame_input = tk.Frame(master=window)
