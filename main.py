@@ -83,9 +83,9 @@ def save():
 
     directory = os.getcwd()
     os.makedirs("mandelbrot-images", exist_ok=True)
-    save_directory = f"{directory}/mandelbrot-images/mandelbrot_{mi}_{er}_{c}_{w}.png"
-    image.save(save_directory)
-    print(f"Image saved to {save_directory}")
+    save_location = f"{directory}/mandelbrot-images/mandelbrot_{mi}_{er}_{c}_{w}.png"
+    image.save(save_location)
+    print(f"Image saved to {save_location}")
 
 colormap = matplotlib.cm.get_cmap("viridis").colors
 palette = denormalize(colormap)
