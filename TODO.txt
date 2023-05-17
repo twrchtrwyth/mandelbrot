@@ -1,0 +1,5 @@
+* Add navigation buttons
+	- Add value to real or imaginary parts of complex number depending on direction
+	- Will need to adjust amount depending on level of zoom, could perhaps multiply number by "width" factor
+* Add zoom in/out button
+	- Deduct or add certain value from width factor

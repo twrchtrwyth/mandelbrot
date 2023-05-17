@@ -91,7 +91,7 @@ colormap = matplotlib.cm.get_cmap("viridis").colors
 palette = denormalize(colormap)
 
 ##########################
-# Tkinter configuration. #
+# TKINTER CONFIGURATION. #
 ##########################
 
 window = tk.Tk()
