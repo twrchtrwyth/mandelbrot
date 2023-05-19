@@ -12,17 +12,20 @@ from viewport import Viewport
 
 SIZE = 256
 
+
 def paint(mandelbrot_set, viewport, palette, smooth):
     for pixel in viewport:
         stability = mandelbrot_set.stability(complex(pixel), smooth)
         index = int(min(stability * len(palette), len(palette) - 1))
         pixel.color = palette[index % len(palette)]
 
+
 def denormalize(palette):
     return [
         tuple(int(channel * 255) for channel in color)
         for color in palette
     ]
+
 
 def generate_set():
     """Update the area of the set that is shown in the window."""
@@ -42,12 +45,30 @@ def generate_set():
     canvas.itemconfig(canvas_image, image=tk_image)
     return image
 
+
+def move_right():
+    """Move the view up by a certain amount depending on zoom level."""
+    position = complex(entry_centre.get().replace(" ", ""))
+    x = float(position.real)
+    zoom = float(entry_width.get())
+    extra_x = 0.1 * zoom
+    x += extra_x
+    if position.imag >= 0:
+        new_position = f"{x} + {position.imag}j"
+    else:
+        new_position = f"{x} {position.imag}j"
+    entry_centre.delete(0, tk.END)
+    entry_centre.insert(0, new_position)
+    generate_set()
+    
+
 def clear_input():
     """Clear all text from the entry boxes."""
     entry_iterations.delete(0, tk.END)
     entry_escape.delete(0, tk.END)
     entry_centre.delete(0, tk.END)
     entry_width.delete(0, tk.END)
+
 
 def show_spiral():
     """Zoom to a beautiful spiral."""
@@ -59,14 +80,16 @@ def show_spiral():
     entry_width.insert(0, "0.002")
     generate_set()
 
+
 def reset():
     """Show the whole Mandelbrot set."""
     clear_input()
     entry_iterations.insert(0, 20)
-    entry_escape.insert(0, 1000)
+    entry_escape.insert(0, 2)
     entry_centre.insert(0, -0.75)
     entry_width.insert(0, 3)
     generate_set()
+
 
 def save():
     """Save the image with a filename corresponding to the parameters of the
@@ -86,6 +109,7 @@ def save():
     save_location = f"{directory}/mandelbrot-images/mandelbrot_{mi}_{er}_{c}_{w}.png"
     image.save(save_location)
     print(f"Image saved to {save_location}")
+
 
 colormap = matplotlib.cm.get_cmap("viridis").colors
 palette = denormalize(colormap)
@@ -172,6 +196,15 @@ button_save = tk.Button(
     command=save
 )
 button_save.pack()
+
+frame_right = tk.Frame(master=window, relief=tk.RAISED, borderwidth=2)
+frame_right.grid(row=3, column=1)
+button_right = tk.Button(
+    master=frame_right,
+    text="Right",
+    command=move_right
+)
+button_right.pack()
 
 reset()
 window.mainloop()
