@@ -67,7 +67,6 @@ def get_imag():
     decimal places in the original imaginary value).
     """
     # TODO: sort out handling of the j when calculating length
-    
     position = complex(entry_centre.get().replace(" ", ""))
     x = float(position.real)
     precision = len(str(abs(x))) - 2  # To help with rounding later.
