@@ -46,19 +46,59 @@ def generate_set():
     return image
 
 
-def move_right():
-    """Move the view up by a certain amount depending on zoom level."""
+def get_real():
+    """
+    Return the whole coordinate (position), x coordinate (corresponding
+    to the real part of the complex number) and the desired precision of
+    the result to be returned (which should correspond to the number of
+    decimal places in the original real value).
+    """
     position = complex(entry_centre.get().replace(" ", ""))
     x = float(position.real)
+    precision = len(str(abs(x))) - 2  # To help with rounding later.
+    return position, x, precision
+
+
+def get_imag():
+    """
+    Return the whole coordinate (position), y coordinate (corresponding
+    to the imaginary part of the complex number) and the desired precision of
+    the result to be returned (which should correspond to the number of
+    decimal places in the original imaginary value).
+    """
+    # TODO: sort out handling of the j when calculating length
+    
+    position = complex(entry_centre.get().replace(" ", ""))
+    x = float(position.real)
+    precision = len(str(abs(x))) - 2  # To help with rounding later.
+    return position, x, precision
+
+
+def get_zoom():
+    """Return the current zoom level, corresponding to the `width` value."""
     zoom = float(entry_width.get())
     extra_x = 0.1 * zoom
-    x += extra_x
+    return extra_x
+
+
+def adjust_position(position, value, precision):
+    """Put the adjusted position value into the field."""
     if position.imag >= 0:
-        new_position = f"{x} + {position.imag}j"
-    else:
-        new_position = f"{x} {position.imag}j"
+        new_position = f"{value:.{precision}f} + {position.imag}j"
+    else:  # Retains `-` if negative value
+        new_position = f"{value:.{precision}f} {position.imag}j"
     entry_centre.delete(0, tk.END)
     entry_centre.insert(0, new_position)
+
+
+def move_right():
+    """
+    Move the view right by a fixed amount, taking into account zoom level.
+    """
+    position, x, precision = get_real()
+    extra_x = get_zoom()
+    x += extra_x
+    adjust_position(position, x, precision)
     generate_set()
     
 
