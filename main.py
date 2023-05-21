@@ -66,11 +66,10 @@ def get_imag():
     the result to be returned (which should correspond to the number of
     decimal places in the original imaginary value).
     """
-    # TODO: sort out handling of the j when calculating length
     position = complex(entry_centre.get().replace(" ", ""))
-    x = float(position.real)
-    precision = len(str(abs(x))) - 2  # To help with rounding later.
-    return position, x, precision
+    y = float(position.imag)
+    precision = len(str(abs(y))) - 2  # To help with rounding later.
+    return position, y, precision
 
 
 def get_zoom():
@@ -80,14 +79,52 @@ def get_zoom():
     return extra_x
 
 
-def adjust_position(position, value, precision):
-    """Put the adjusted position value into the field."""
+def adjust_real_position(position, value, precision):
+    """Put the adjusted position value into the field after real (i.e.
+    horizontal) change.
+    """
     if position.imag >= 0:
         new_position = f"{value:.{precision}f} + {position.imag}j"
     else:  # Retains `-` if negative value
         new_position = f"{value:.{precision}f} {position.imag}j"
     entry_centre.delete(0, tk.END)
     entry_centre.insert(0, new_position)
+
+
+def adjust_imag_position(position, value, precision):
+    """Put the adjusted position value into the field after imaginary (i.e.
+    vertical) change.
+    """
+    if value >= 0:
+        new_position = f"{position.real} + {value:.{precision}f}j"
+    else:  # Retains `-` if negative value
+        new_position = f"{position.real} {value:.{precision}f}j"
+    entry_centre.delete(0, tk.END)
+    entry_centre.insert(0, new_position)
+
+
+def move_up():
+    """
+    Move the view up by a fixed amount, taking into account zoom level.
+    """
+    position, y, precision = get_imag()
+    extra_y = get_zoom()
+    y += extra_y
+    adjust_imag_position(position, y, precision)
+    print(position, y, extra_y, precision)
+    generate_set()
+
+
+def move_down():
+    """
+    Move the view down by a fixed amount, taking into account zoom level.
+    """
+    position, y, precision = get_imag()
+    extra_y = get_zoom()
+    y -= extra_y
+    adjust_imag_position(position, y, precision)
+    print(position, y, extra_y, precision)
+    generate_set()
 
 
 def move_right():
@@ -97,7 +134,18 @@ def move_right():
     position, x, precision = get_real()
     extra_x = get_zoom()
     x += extra_x
-    adjust_position(position, x, precision)
+    adjust_real_position(position, x, precision)
+    generate_set()
+
+
+def move_left():
+    """
+    Move the view left by a fixed amount, taking into account zoom level.
+    """
+    position, x, precision = get_real()
+    extra_x = get_zoom()
+    x -= extra_x
+    adjust_real_position(position, x, precision)
     generate_set()
     
 
@@ -236,14 +284,41 @@ button_save = tk.Button(
 )
 button_save.pack()
 
+frame_up = tk.Frame(master=window, relief=tk.RAISED, borderwidth=2)
+frame_up.grid(row=3, column=1)
+button_up = tk.Button(
+    master=frame_up,
+    text="Up",
+    command=move_up
+)
+button_up.pack()
+
+frame_down = tk.Frame(master=window, relief=tk.RAISED, borderwidth=2)
+frame_down.grid(row=3, column=2)
+button_down = tk.Button(
+    master=frame_down,
+    text="Down",
+    command=move_down
+)
+button_down.pack()
+
 frame_right = tk.Frame(master=window, relief=tk.RAISED, borderwidth=2)
-frame_right.grid(row=3, column=1)
+frame_right.grid(row=4, column=1)
 button_right = tk.Button(
     master=frame_right,
     text="Right",
     command=move_right
 )
 button_right.pack()
+
+frame_left = tk.Frame(master=window, relief=tk.RAISED, borderwidth=2)
+frame_left.grid(row=4, column=2)
+button_left = tk.Button(
+    master=frame_left,
+    text="Left",
+    command=move_left
+)
+button_left.pack()
 
 reset()
 window.mainloop()
